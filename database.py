@@ -34,10 +34,17 @@ def init_database():
             phone TEXT,
             gender TEXT,
             class_name TEXT,              -- 班级
+            group_name TEXT,              -- 组名
             center TEXT,                  -- 分中心
             join_date TEXT,               -- 入塾日期 YYYY-MM-DD
             company_name TEXT,            -- 公司名
             position TEXT,                -- 职位
+            company_address TEXT,         -- 公司地址
+            birthday TEXT,                -- 生日时间 YYYY-MM-DD
+            industry_category TEXT,       -- 行业分类
+            industry TEXT,                -- 所属行业
+            company_products TEXT,        -- 公司产品
+            company_size TEXT,            -- 规模
             referrer TEXT,                -- 推荐人
             email TEXT,
             wechat TEXT,
@@ -219,6 +226,22 @@ def init_database():
     cur.execute("CREATE INDEX IF NOT EXISTS idx_checkin_member ON reading_checkins(member_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_checkin_date ON reading_checkins(checkin_date)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_share_member ON reading_shares(member_id)")
+
+    # 迁移：为已有数据库补充新增列
+    new_columns = [
+        ('group_name', 'TEXT'),
+        ('company_address', 'TEXT'),
+        ('birthday', 'TEXT'),
+        ('industry_category', 'TEXT'),
+        ('industry', 'TEXT'),
+        ('company_products', 'TEXT'),
+        ('company_size', 'TEXT'),
+    ]
+    for col_name, col_type in new_columns:
+        try:
+            cur.execute(f"ALTER TABLE members ADD COLUMN {col_name} {col_type}")
+        except Exception:
+            pass  # 列已存在则忽略
 
     # 插入默认配置
     default_configs = [

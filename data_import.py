@@ -19,10 +19,13 @@ IMPORT_TEMPLATES = {
     "学员基本信息": {
         "table": "members",
         "required": ["name"],
-        "optional": ["phone", "gender", "class_name", "center", "join_date",
-                     "company_name", "position", "referrer", "email", "wechat", "notes"],
+        "optional": ["status", "gender", "class_name", "group_name", "center",
+                     "company_name", "position", "phone", "company_address",
+                     "birthday", "join_date", "industry_category", "industry",
+                     "company_products", "company_size", "referrer",
+                     "email", "wechat", "notes"],
         "description": "导入学员基本档案信息",
-        "sample_columns": "姓名(name), 手机号(phone), 性别(gender), 班级(class_name), 分中心(center), 入塾日期(join_date), 公司(company_name), 职位(position), 推荐人(referrer)",
+        "sample_columns": "是否在册(status), 姓名(name), 性别(gender), 所属班级(class_name), 组名(group_name), 所在分中心(center), 公司名称(company_name), 职务(position), 手机号码(phone), 公司地址(company_address), 生日时间(birthday), 入塾日期(join_date), 行业分类(industry_category), 所属行业(industry), 公司产品(company_products), 规模(company_size), 推荐人(referrer)",
     },
     "小组学习会记录": {
         "table": "group_sessions",
@@ -95,6 +98,14 @@ COLUMN_ALIASES = {
     '推荐人': 'referrer', '介绍人': 'referrer',
     '邮箱': 'email', 'Email': 'email',
     '微信': 'wechat', '微信号': 'wechat',
+    '是否在册': 'status', '在册': 'status', '状态': 'status',
+    '组名': 'group_name', '所属组': 'group_name', '小组': 'group_name',
+    '公司地址': 'company_address', '地址': 'company_address',
+    '生日': 'birthday', '生日时间': 'birthday', '出生日期': 'birthday', '生日日期': 'birthday',
+    '行业分类': 'industry_category',
+    '所属行业': 'industry', '行业': 'industry',
+    '公司产品': 'company_products', '产品': 'company_products',
+    '规模': 'company_size', '公司规模': 'company_size', '企业规模': 'company_size',
     '日期': 'session_date', '学习日期': 'session_date', '活动日期': 'session_date',
     '主题': 'theme', '学习主题': 'theme', '内容': 'theme',
     '出勤': 'attendance', '是否出席': 'attendance', '参与情况': 'attendance', '状态': 'attendance',
@@ -366,7 +377,7 @@ def get_import_guide() -> str:
 
 | 数据类型 | 必填字段 | 说明 |
 |----------|----------|------|
-| 学员基本信息 | 姓名(name) | 先导入学员信息，再导入其他数据 |
+| 学员基本信息 | 姓名(name) | 先导入学员信息，再导入其他数据。支持 是否在册/所属班级/组名/公司地址/生日/行业分类/所属行业/公司产品/规模 等字段 |
 | 小组学习会记录 | 姓名,日期 | 需学员信息已存在 |
 | 班级学习会记录 | 姓名,日期 | 需学员信息已存在 |
 | 课程参与记录 | 姓名,课程名,课程日期 | 需学员信息已存在 |

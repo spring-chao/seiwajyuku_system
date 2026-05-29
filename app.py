@@ -177,12 +177,20 @@ def render_import_page():
                         # 每种类型加一行示例数据
                         if selected_template == "学员基本信息":
                             sample_data = {
-                                "name": ["张三"], "phone": ["13800138000"],
-                                "gender": ["男"], "class_name": ["盛和塾一班"],
-                                "center": ["北京分中心"], "join_date": ["2024-01-01"],
-                                "company_name": ["某某科技"], "position": ["总经理"],
+                                "status": ["active"], "name": ["张三"], "gender": ["男"],
+                                "class_name": ["盛和塾一班"], "group_name": ["北京一组"],
+                                "center": ["北京分中心"], "company_name": ["某某科技"],
+                                "position": ["总经理"], "phone": ["13800138000"],
+                                "company_address": ["北京市朝阳区建国路88号"],
+                                "birthday": ["1985-06-15"],
+                                "join_date": ["2024-01-01"],
+                                "industry_category": ["制造业"],
+                                "industry": ["智能制造"],
+                                "company_products": ["工业机器人"],
+                                "company_size": ["200-500人"],
+                                "referrer": ["李四"],
                             }
-                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='学员信息')
+                            pd.DataFrame(sample_data, index=[0]).to_excel(writer, index=False, sheet_name='学员信息')
                         elif selected_template == "小组学习会记录":
                             sample_data = {
                                 "name": ["张三"], "session_date": ["2024-01-15"],
