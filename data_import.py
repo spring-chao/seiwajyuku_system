@@ -26,6 +26,7 @@ IMPORT_TEMPLATES = {
                      "email", "wechat", "notes"],
         "description": "导入学员基本档案信息",
         "sample_columns": "是否在册(status), 姓名(name), 性别(gender), 所属班级(class_name), 组名(group_name), 所在分中心(center), 公司名称(company_name), 职务(position), 手机号码(phone), 公司地址(company_address), 生日时间(birthday), 入塾日期(join_date), 行业分类(industry_category), 所属行业(industry), 公司产品(company_products), 规模(company_size), 推荐人(referrer)",
+        "unique_keys": ["name", "phone"],  # 用于去重/更新判断
     },
     "小组学习会记录": {
         "table": "group_sessions",
@@ -34,6 +35,7 @@ IMPORT_TEMPLATES = {
         "description": "导入各小组学习会的参与记录",
         "sample_columns": "姓名(name), 日期(session_date), 主题(theme), 出勤(attendance), 小组(group_name)",
         "member_key": "name",
+        "unique_keys": ["member_id", "session_date"],
     },
     "班级学习会记录": {
         "table": "class_sessions",
@@ -42,6 +44,7 @@ IMPORT_TEMPLATES = {
         "description": "导入班级学习会的参与记录",
         "sample_columns": "姓名(name), 日期(session_date), 主题(theme), 出勤(attendance), 角色(role)",
         "member_key": "name",
+        "unique_keys": ["member_id", "session_date"],
     },
     "课程参与记录": {
         "table": "courses",
@@ -50,6 +53,7 @@ IMPORT_TEMPLATES = {
         "description": "导入课程参与情况",
         "sample_columns": "姓名(name), 课程名(course_name), 日期(course_date), 出勤(attendance), 成绩(score)",
         "member_key": "name",
+        "unique_keys": ["member_id", "course_name", "course_date"],
     },
     "报告会参与记录": {
         "table": "report_meetings",
@@ -58,6 +62,7 @@ IMPORT_TEMPLATES = {
         "description": "导入报告会参与记录",
         "sample_columns": "姓名(name), 报告会(meeting_name), 日期(meeting_date), 出勤(attendance), 是否发言(has_speech)",
         "member_key": "name",
+        "unique_keys": ["member_id", "meeting_name", "meeting_date"],
     },
     "游学参与记录": {
         "table": "study_tours",
@@ -66,6 +71,7 @@ IMPORT_TEMPLATES = {
         "description": "导入游学参与记录",
         "sample_columns": "姓名(name), 游学地(destination), 日期(tour_date), 天数(duration_days), 收获评分(harvest_score)",
         "member_key": "name",
+        "unique_keys": ["member_id", "destination", "tour_date"],
     },
     "读书打卡记录": {
         "table": "reading_checkins",
@@ -74,6 +80,7 @@ IMPORT_TEMPLATES = {
         "description": "导入读书打卡数据",
         "sample_columns": "姓名(name), 日期(checkin_date), 书名(book_name), 页数(pages_read), 时长(分钟/duration_minutes)",
         "member_key": "name",
+        "unique_keys": ["member_id", "checkin_date"],
     },
     "读书分享记录": {
         "table": "reading_shares",
@@ -82,6 +89,7 @@ IMPORT_TEMPLATES = {
         "description": "导入读书分享记录",
         "sample_columns": "姓名(name), 日期(share_date), 书名(book_name), 分享类型(share_type), 质量评分(quality_score)",
         "member_key": "name",
+        "unique_keys": ["member_id", "share_date", "book_name"],
     },
 }
 
@@ -191,7 +199,7 @@ def import_excel(file_path: str, template_key: str) -> Dict:
         return {'success': False, 'imported': 0, 'skipped': 0,
                 'errors': [f'未知模板: {template_key}'], 'message': '导入失败'}
 
-    result = {'success': True, 'imported': 0, 'skipped': 0, 'errors': [], 'message': ''}
+    result = {'success': True, 'imported': 0, 'updated': 0, 'duplicate': 0, 'skipped': 0, 'errors': [], 'message': ''}
 
     try:
         # 读取文件
@@ -213,6 +221,15 @@ def import_excel(file_path: str, template_key: str) -> Dict:
             return {'success': False, 'imported': 0, 'skipped': 0,
                     'errors': [f'缺少必填列: {", ".join(missing)}'],
                     'message': '导入失败，请检查表头'}
+
+        # 标准化学员状态值（中文 → 英文）
+        STATUS_VALUE_MAP = {
+            '在册': 'active', '活跃': 'active', '正常': 'active',
+            '流失': 'churned', '退塾': 'churned', '退出': 'churned',
+            '暂停': 'paused', '停课': 'paused', '休学': 'paused',
+        }
+        if 'status' in df.columns:
+            df['status'] = df['status'].map(lambda v: STATUS_VALUE_MAP.get(str(v).strip(), v) if v else v)
 
         # 清理数据
         df = df.replace({pd.NA: None, pd.NaT: None, '': None, float('nan'): None})
@@ -335,8 +352,20 @@ def import_excel(file_path: str, template_key: str) -> Dict:
                                 f"UPDATE {table} SET {set_clause} WHERE id=?",
                                 tuple(record.values()) + (matched_id,)
                             )
-                            result['imported'] += 1
+                            result['updated'] += 1
                             continue
+
+                    # 对于非 members 表，检查 unique_keys 去重
+                    if table != 'members' and 'unique_keys' in template:
+                        uk_fields = template['unique_keys']
+                        # 确保所有唯一键字段都在 record 中
+                        if all(k in record for k in uk_fields):
+                            conditions = ' AND '.join(f"{k}=?" for k in uk_fields)
+                            cur.execute(f"SELECT id FROM {table} WHERE {conditions}",
+                                        tuple(record[k] for k in uk_fields))
+                            if cur.fetchone():
+                                result['duplicate'] += 1
+                                continue
 
                     columns = ', '.join(record.keys())
                     placeholders = ', '.join(['?'] * len(record))
@@ -361,11 +390,18 @@ def import_excel(file_path: str, template_key: str) -> Dict:
         }
         execute_insert('import_log', log_data)
 
-        msg = f"✅ 成功导入 {result['imported']} 条记录"
+        parts = []
+        if result['imported'] > 0:
+            parts.append(f"✅ 成功导入 {result['imported']} 条新记录")
+        if result['updated'] > 0:
+            parts.append(f"🔄 更新 {result['updated']} 条已有记录")
+        if result['duplicate'] > 0:
+            parts.append(f"⏭️ 跳过 {result['duplicate']} 条重复记录")
         if result['skipped'] > 0:
-            msg += f"，跳过 {result['skipped']} 条"
+            parts.append(f"⚠️ 跳过 {result['skipped']} 条错误记录")
         if result['errors']:
-            msg += f"，{len(result['errors'])} 个警告"
+            parts.append(f"（{len(result['errors'])} 个警告）")
+        msg = '，'.join(parts) if parts else "没有导入任何记录"
         result['message'] = msg
 
     except Exception as e:
