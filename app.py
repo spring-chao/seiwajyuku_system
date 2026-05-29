@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from database import init_database
-from data_import import get_import_guide, IMPORT_TEMPLATES, import_excel, get_sample_dataframe
+from data_import import get_import_guide, IMPORT_TEMPLATES, import_excel
 from suggestions import generate_suggestions
 from datetime import datetime
 
@@ -168,85 +168,81 @@ def render_import_page():
                     st.caption(f"💡 示例列: {template['sample_columns']}")
 
                 with col_dl:
-                    sample_df = get_sample_dataframe(selected_template)
-                    if not sample_df.empty:
-                        import pandas as pd
-                        from io import BytesIO
-                        import openpyxl
+                    import pandas as pd
+                    from io import BytesIO
+                    import openpyxl
 
-                        output = BytesIO()
-                        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                            # 每种类型加一行示例数据
-                            if selected_template == "学员基本信息":
-                                sample_data = {
-                                    "name": ["张三"], "phone": ["13800138000"],
-                                    "gender": ["男"], "class_name": ["盛和塾一班"],
-                                    "center": ["北京分中心"], "join_date": ["2024-01-01"],
-                                    "company_name": ["某某科技"], "position": ["总经理"],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='学员信息')
-                            elif selected_template == "小组学习会记录":
-                                sample_data = {
-                                    "name": ["张三"], "session_date": ["2024-01-15"],
-                                    "theme": ["《活法》学习"], "attendance": ["present"],
-                                    "group_name": ["北京一组"], "reflection": ["收获很大，对经营有帮助"],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='小组学习会')
-                            elif selected_template == "班级学习会记录":
-                                sample_data = {
-                                    "name": ["张三"], "session_date": ["2024-01-20"],
-                                    "theme": ["经营为什么需要哲学"], "attendance": ["present"],
-                                    "role": ["participant"],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='班级学习会')
-                            elif selected_template == "课程参与记录":
-                                sample_data = {
-                                    "name": ["张三"], "course_name": ["经营十二条"],
-                                    "course_date": ["2024-01-10"], "attendance": ["present"],
-                                    "score": [88],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='课程记录')
-                            elif selected_template == "报告会参与记录":
-                                sample_data = {
-                                    "name": ["张三"], "meeting_name": ["月度经营报告会"],
-                                    "meeting_date": ["2024-01-25"], "attendance": ["present"],
-                                    "has_speech": [1], "speech_topic": ["我的经营心得"],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='报告会记录')
-                            elif selected_template == "游学参与记录":
-                                sample_data = {
-                                    "name": ["张三"], "destination": ["日本京瓷"],
-                                    "tour_date": ["2024-03-01"], "duration_days": [5],
-                                    "harvest_score": [4.5], "reflection": ["深受震撼"],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='游学记录')
-                            elif selected_template == "读书打卡记录":
-                                sample_data = {
-                                    "name": ["张三"], "checkin_date": ["2024-01-15"],
-                                    "book_name": ["活法"], "pages_read": [30],
-                                    "duration_minutes": [45], "content_summary": ["今天读到利他之心..."],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='读书打卡')
-                            elif selected_template == "读书分享记录":
-                                sample_data = {
-                                    "name": ["张三"], "share_date": ["2024-01-20"],
-                                    "book_name": ["干法"], "share_type": ["读后感"],
-                                    "content": ["读了这本书让我重新思考工作的意义..."],
-                                    "quality_score": [4],
-                                }
-                                pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='读书分享')
-                            else:
-                                sample_df.to_excel(writer, index=False, sheet_name='数据')
-                        excel_data = output.getvalue()
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                        # 每种类型加一行示例数据
+                        if selected_template == "学员基本信息":
+                            sample_data = {
+                                "name": ["张三"], "phone": ["13800138000"],
+                                "gender": ["男"], "class_name": ["盛和塾一班"],
+                                "center": ["北京分中心"], "join_date": ["2024-01-01"],
+                                "company_name": ["某某科技"], "position": ["总经理"],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='学员信息')
+                        elif selected_template == "小组学习会记录":
+                            sample_data = {
+                                "name": ["张三"], "session_date": ["2024-01-15"],
+                                "theme": ["《活法》学习"], "attendance": ["present"],
+                                "group_name": ["北京一组"], "reflection": ["收获很大，对经营有帮助"],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='小组学习会')
+                        elif selected_template == "班级学习会记录":
+                            sample_data = {
+                                "name": ["张三"], "session_date": ["2024-01-20"],
+                                "theme": ["经营为什么需要哲学"], "attendance": ["present"],
+                                "role": ["participant"],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='班级学习会')
+                        elif selected_template == "课程参与记录":
+                            sample_data = {
+                                "name": ["张三"], "course_name": ["经营十二条"],
+                                "course_date": ["2024-01-10"], "attendance": ["present"],
+                                "score": [88],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='课程记录')
+                        elif selected_template == "报告会参与记录":
+                            sample_data = {
+                                "name": ["张三"], "meeting_name": ["月度经营报告会"],
+                                "meeting_date": ["2024-01-25"], "attendance": ["present"],
+                                "has_speech": [1], "speech_topic": ["我的经营心得"],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='报告会记录')
+                        elif selected_template == "游学参与记录":
+                            sample_data = {
+                                "name": ["张三"], "destination": ["日本京瓷"],
+                                "tour_date": ["2024-03-01"], "duration_days": [5],
+                                "harvest_score": [4.5], "reflection": ["深受震撼"],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='游学记录')
+                        elif selected_template == "读书打卡记录":
+                            sample_data = {
+                                "name": ["张三"], "checkin_date": ["2024-01-15"],
+                                "book_name": ["活法"], "pages_read": [30],
+                                "duration_minutes": [45], "content_summary": ["今天读到利他之心..."],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='读书打卡')
+                        elif selected_template == "读书分享记录":
+                            sample_data = {
+                                "name": ["张三"], "share_date": ["2024-01-20"],
+                                "book_name": ["干法"], "share_type": ["读后感"],
+                                "content": ["读了这本书让我重新思考工作的意义..."],
+                                "quality_score": [4],
+                            }
+                            pd.DataFrame(sample_data).to_excel(writer, index=False, sheet_name='读书分享')
+                    excel_data = output.getvalue()
 
-                        st.download_button(
-                            label=f"📥 下载「{selected_template}」模板",
-                            data=excel_data,
-                            file_name=f"{selected_template}_模板.xlsx",
-                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                            use_container_width=True,
-                            type="primary",
-                        )
+                    st.download_button(
+                        label=f"📥 下载「{selected_template}」模板",
+                        data=excel_data,
+                        file_name=f"{selected_template}_模板.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True,
+                        type="primary",
+                    )
 
                 st.info("💡 **提示**：下载模板后，按照示例行的格式填写数据，列名支持中英文自动映射（如 `姓名` = `name`）")
 
