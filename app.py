@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from database import init_database
-from data_import import get_import_guide, IMPORT_TEMPLATES, import_excel
+from data_import import get_import_guide, IMPORT_TEMPLATES, COLUMN_ALIASES, import_excel
 from suggestions import generate_suggestions
 from datetime import datetime
 
@@ -160,11 +160,23 @@ def render_import_page():
 
             if selected_template:
                 template = IMPORT_TEMPLATES[selected_template]
+
+                # 英文字段 → 中文字段 反向映射
+                en_to_cn = {}
+                for cn, en in COLUMN_ALIASES.items():
+                    if en not in en_to_cn:
+                        en_to_cn[en] = cn
+
+                def fmt_fields(fields):
+                    return ', '.join(
+                        f"{en_to_cn.get(f, f)} ({f})" for f in fields
+                    )
+
                 col_info, col_dl = st.columns([2, 1])
 
                 with col_info:
-                    st.markdown(f"**📋 必填字段**: {', '.join(template['required'])}")
-                    st.markdown(f"**📝 可选字段**: {', '.join(template['optional'])}")
+                    st.markdown(f"**📋 必填字段**: {fmt_fields(template['required'])}")
+                    st.markdown(f"**📝 可选字段**: {fmt_fields(template['optional'])}")
                     st.caption(f"💡 示例列: {template['sample_columns']}")
 
                 with col_dl:
