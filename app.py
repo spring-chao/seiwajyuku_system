@@ -129,14 +129,6 @@ def render_import_page():
             <strong style="color:#e74c3c; font-size:1.1rem;">① 下载模板</strong><br>
             <span style="color:#666;">选择类型 → 下载 Excel 模板</span>
         </div>
-        <div style="flex:1; text-align:center; padding:0.8rem; background:#f5f5f5; border-radius:10px; border:2px dashed #ccc;">
-            <strong style="color:#999; font-size:1.1rem;">② 填写数据</strong><br>
-            <span style="color:#999;">按模板格式填写学员/活动数据</span>
-        </div>
-        <div style="flex:1; text-align:center; padding:0.8rem; background:#f5f5f5; border-radius:10px; border:2px dashed #ccc;">
-            <strong style="color:#999; font-size:1.1rem;">③ 上传导入</strong><br>
-            <span style="color:#999;">上传文件 → 预览确认 → 导入</span>
-        </div>
     </div>
     """, unsafe_allow_html=True)
 
