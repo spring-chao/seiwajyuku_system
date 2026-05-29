@@ -280,6 +280,17 @@ def import_excel(file_path: str, template_key: str) -> Dict:
                 if member_id is not None:
                     record['member_id'] = member_id
 
+                # 转换日期/时间戳类型为字符串（SQLite 不支持 Timestamp）
+                from datetime import datetime
+                for k, v in list(record.items()):
+                    if hasattr(v, 'isoformat'):
+                        if pd.isna(v):
+                            del record[k]
+                        else:
+                            record[k] = v.isoformat() if isinstance(v, (datetime, pd.Timestamp)) else str(v)
+                    elif isinstance(v, (float, int)) and pd.isna(v):
+                        pass  # 保持原样，SQLite 可接受 None
+
                 # 插入
                 if record:
                     columns = ', '.join(record.keys())
