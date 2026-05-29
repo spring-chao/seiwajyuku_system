@@ -270,6 +270,7 @@ def render_import_page():
             uploaded_file = st.file_uploader(
                 "选择已按模板填写的 Excel (.xlsx) 或 CSV (.csv) 文件",
                 type=['xlsx', 'xls', 'csv'],
+                key=f"file_uploader_{st.session_state.get('upload_counter', 0)}",
                 help="请先在上方下载模板，按格式填写后再上传",
             )
 
@@ -320,8 +321,8 @@ def render_import_page():
                                         st.caption(f"...还有 {len(result['errors'])-20} 条错误")
 
                     with col2:
-                        reimport_key = f"reimport_{datetime.now().timestamp()}"
                         if st.button("↩️ 重新选择", width='stretch'):
+                            st.session_state.upload_counter = st.session_state.get('upload_counter', 0) + 1
                             st.rerun()
 
                 except Exception as e:
