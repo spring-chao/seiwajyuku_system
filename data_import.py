@@ -304,7 +304,11 @@ def import_excel(file_path: str, template_key: str) -> Dict:
                         if pd.isna(v):
                             del record[k]
                         else:
-                            record[k] = v.isoformat() if isinstance(v, (datetime, pd.Timestamp)) else str(v)
+                            # 日期只保留 YYYY-MM-DD，不显示 T00:00:00
+                            if isinstance(v, (datetime, pd.Timestamp)):
+                                record[k] = v.strftime('%Y-%m-%d')
+                            else:
+                                record[k] = str(v)
                     elif isinstance(v, (float, int)) and pd.isna(v):
                         pass  # 保持原样，SQLite 可接受 None
 

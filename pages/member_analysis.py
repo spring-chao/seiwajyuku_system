@@ -67,7 +67,10 @@ def render():
                 st.markdown(f"**公司**: {member['company_name'] or '-'}")
                 st.markdown(f"**职位**: {member['position'] or '-'}")
             with col4:
-                st.markdown(f"**入塾日期**: {member['join_date'] or '-'}")
+                date_val = member['join_date'] or '-'
+                if date_val != '-' and 'T' in str(date_val):
+                    date_val = str(date_val).split('T')[0]
+                st.markdown(f"**入塾日期**: {date_val}")
                 st.markdown(f"**推荐人**: {member['referrer'] or '-'}")
 
             st.markdown("---")
