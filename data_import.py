@@ -291,8 +291,21 @@ def import_excel(file_path: str, template_key: str) -> Dict:
                     elif isinstance(v, (float, int)) and pd.isna(v):
                         pass  # 保持原样，SQLite 可接受 None
 
-                # 插入
+                # 插入/更新
                 if record:
+                    # 学员信息表：按姓名自动去重，已存在则更新，不存在则插入
+                    if table == 'members' and 'name' in record:
+                        cur.execute("SELECT id FROM members WHERE name=?", (record['name'],))
+                        existing = cur.fetchone()
+                        if existing:
+                            set_clause = ', '.join(f"{k}=?" for k in record.keys())
+                            cur.execute(
+                                f"UPDATE {table} SET {set_clause} WHERE id=?",
+                                tuple(record.values()) + (existing[0],)
+                            )
+                            result['imported'] += 1
+                            continue
+
                     columns = ', '.join(record.keys())
                     placeholders = ', '.join(['?'] * len(record))
                     sql = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
