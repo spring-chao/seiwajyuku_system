@@ -98,7 +98,7 @@ def render():
                     height=350,
                     showlegend=False,
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             with col2:
                 st.subheader("📈 各维度详情")
@@ -111,7 +111,7 @@ def render():
                     }
                     for dim_name, dim_data in score['dimensions'].items()
                 ])
-                st.dataframe(dim_df, use_container_width=True, hide_index=True)
+                st.dataframe(dim_df, width='stretch', hide_index=True)
 
                 # 薄弱维度预警
                 if weak_dims:
@@ -147,7 +147,7 @@ def render():
                         title=label_map.get(table_key, table_key),
                     )
                     fig.update_layout(height=250)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
             if not has_activity_data:
                 st.info("暂无该学员的活动参与记录")
@@ -158,21 +158,21 @@ def render():
                 st.subheader("📚 读书打卡记录")
                 checkin_df = pd.DataFrame(analysis['checkins'])
                 if not checkin_df.empty:
-                    st.dataframe(checkin_df, use_container_width=True, hide_index=True)
+                    st.dataframe(checkin_df, width='stretch', hide_index=True)
 
             # ---- 分享记录 ----
             if analysis['shares']:
                 st.subheader("🎤 读书分享记录")
                 share_df = pd.DataFrame(analysis['shares'])
                 if not share_df.empty:
-                    st.dataframe(share_df, use_container_width=True, hide_index=True)
+                    st.dataframe(share_df, width='stretch', hide_index=True)
 
             # ---- 游学记录 ----
             if analysis['tours']:
                 st.subheader("✈️ 游学记录")
                 tour_df = pd.DataFrame(analysis['tours'])
                 if not tour_df.empty:
-                    st.dataframe(tour_df, use_container_width=True, hide_index=True)
+                    st.dataframe(tour_df, width='stretch', hide_index=True)
 
     # ================================================================
     # Tab 2: 排行榜
@@ -191,7 +191,7 @@ def render():
             }
             for i, r in enumerate(rankings['综合排行'])
         ])
-        st.dataframe(top_df, use_container_width=True, hide_index=True)
+        st.dataframe(top_df, width='stretch', hide_index=True)
 
         # 出勤率排行
         st.markdown("---")
@@ -207,7 +207,7 @@ def render():
             }
             for i, r in enumerate(rankings['attendance_ranking'][:20])
         ])
-        st.dataframe(att_df, use_container_width=True, hide_index=True)
+        st.dataframe(att_df, width='stretch', hide_index=True)
 
         # 各维度排行
         st.markdown("---")
@@ -219,7 +219,7 @@ def render():
                     {"排名": j + 1, "姓名": r['name'], "得分": r['score'], "分层": r.get('layer', '-')}
                     for j, r in enumerate(dim_list)
                 ])
-                st.dataframe(dim_df, use_container_width=True, hide_index=True)
+                st.dataframe(dim_df, width='stretch', hide_index=True)
 
     # ================================================================
     # Tab 3: 学员列表
@@ -244,7 +244,7 @@ def render():
                 for s in all_scores
             ]).sort_values("综合评分", ascending=False)
 
-            st.dataframe(list_df, use_container_width=True, hide_index=True)
+            st.dataframe(list_df, width='stretch', hide_index=True)
 
             # 分层筛选
             st.markdown("---")
@@ -261,7 +261,7 @@ def render():
                      "班级": s.get('class_name', ''), "分中心": s.get('center', '')}
                     for s in filtered
                 ])
-                st.dataframe(filtered_df, use_container_width=True, hide_index=True)
+                st.dataframe(filtered_df, width='stretch', hide_index=True)
                 if len(filtered) > 0:
                     st.info(f"共 {len(filtered)} 名学员属于 {layer_filter}")
         else:

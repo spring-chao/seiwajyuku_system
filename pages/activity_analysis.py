@@ -97,7 +97,7 @@ def render():
                 )
                 fig.update_layout(showlegend=False, height=400,
                                   yaxis_title="参与率(%)")
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             with col2:
                 fig = px.bar(
@@ -107,10 +107,10 @@ def render():
                 )
                 fig.update_layout(showlegend=False, height=400,
                                   yaxis_title="参与学员数")
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             st.markdown("---")
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            st.dataframe(df, width='stretch', hide_index=True)
         else:
             st.info("暂无活动数据，请先导入活动记录")
 
@@ -133,7 +133,7 @@ def render():
                     member_map = dict(zip(members_df['id'], members_df['name']))
                     df['学员姓名'] = df['member_id'].map(member_map).fillna('未知')
 
-                st.dataframe(df, use_container_width=True, hide_index=True)
+                st.dataframe(df, width='stretch', hide_index=True)
                 st.caption(f"共 {len(df)} 条记录")
             else:
                 st.info(f"{ACTIVITY_LABELS[selected_activity]} 暂无数据")
@@ -193,12 +193,12 @@ def render():
                         height=max(400, len(pivot) * 40),
                     )
                     fig.update_layout(title=f"{dim_options[dim1]} × {dim_options[dim2]} 平均评分热力图")
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
                     # 详细表格
                     st.markdown("---")
                     st.dataframe(cross_df.sort_values("平均评分", ascending=False),
-                                 use_container_width=True, hide_index=True)
+                                 width='stretch', hide_index=True)
                 else:
                     st.info("暂无交叉分析数据")
 
@@ -230,7 +230,7 @@ def render():
                     },
                 )
                 fig.update_layout(height=400)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
     # ================================================================
     # Tab 3: 趋势对比
@@ -267,7 +267,7 @@ def render():
                     markers=True,
                 )
                 fig.update_layout(height=450)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
             else:
                 st.info("所选活动暂无月度数据")
 
@@ -281,7 +281,7 @@ def render():
                     color="活动类型", text="参与次数",
                 )
                 fig.update_layout(showlegend=False, height=350)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
         else:
             st.info("请至少选择一个活动类型")
 

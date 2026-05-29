@@ -50,7 +50,7 @@ def main():
         st.session_state.current_page = "overview"
 
     for label, page_id in nav_options.items():
-        if st.sidebar.button(label, use_container_width=True,
+        if st.sidebar.button(label, width='stretch',
                              type="primary" if st.session_state.current_page == page_id else "secondary"):
             st.session_state.current_page = page_id
             st.rerun()
@@ -64,12 +64,12 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.markdown("### ⚡ 快捷操作")
 
-    if st.sidebar.button("🤖 生成运营建议", use_container_width=True):
+    if st.sidebar.button("🤖 生成运营建议", width='stretch'):
         with st.spinner("正在分析数据，生成建议..."):
             count = len(generate_suggestions())
         st.sidebar.success(f"✅ 已生成 {count} 条建议")
 
-    if st.sidebar.button("🔄 刷新数据", use_container_width=True):
+    if st.sidebar.button("🔄 刷新数据", width='stretch'):
         st.rerun()
 
     # ---- 路由到对应页面 ----
@@ -252,7 +252,7 @@ def render_import_page():
                         data=excel_data,
                         file_name=f"{selected_template}_模板.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True,
+                        width='stretch',
                         type="primary",
                     )
 
@@ -290,7 +290,7 @@ def render_import_page():
                         preview_df = pd.read_excel(tmp_path, nrows=5)
 
                     st.markdown("##### 👀 数据预览（前5行）")
-                    st.dataframe(preview_df, use_container_width=True)
+                    st.dataframe(preview_df, width='stretch')
 
                     # 数据校验摘要
                     total_rows = pd.read_excel(tmp_path).shape[0] if ext != '.csv' else pd.read_csv(tmp_path, encoding='utf-8-sig').shape[0]
@@ -301,7 +301,7 @@ def render_import_page():
                     st.markdown("---")
                     col1, col2, col3 = st.columns([1, 1, 2])
                     with col1:
-                        if st.button("🚀 开始导入", type="primary", use_container_width=True):
+                        if st.button("🚀 开始导入", type="primary", width='stretch'):
                             with st.spinner("正在导入数据..."):
                                 result = import_excel(tmp_path, selected_template)
 
@@ -321,7 +321,7 @@ def render_import_page():
 
                     with col2:
                         reimport_key = f"reimport_{datetime.now().timestamp()}"
-                        if st.button("↩️ 重新选择", use_container_width=True):
+                        if st.button("↩️ 重新选择", width='stretch'):
                             st.rerun()
 
                 except Exception as e:
@@ -356,7 +356,7 @@ def render_import_page():
         )
         conn.close()
         if not logs.empty:
-            st.dataframe(logs, use_container_width=True, hide_index=True)
+            st.dataframe(logs, width='stretch', hide_index=True)
         else:
             st.info("暂无导入记录")
 

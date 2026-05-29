@@ -29,7 +29,7 @@ def render():
         with col1:
             st.markdown("系统基于学员分层模型和各维度参与数据，自动生成个性化运营建议")
         with col2:
-            if st.button("🔄 重新生成建议", use_container_width=True):
+            if st.button("🔄 重新生成建议", width='stretch'):
                 with st.spinner("正在分析数据，生成建议..."):
                     suggestions = generate_suggestions()
                 st.success(f"✅ 已生成 {len(suggestions)} 条新建议")
@@ -162,7 +162,7 @@ def render():
                 '活跃学员': [m['active_members'] for m in monthly_data],
             })
             fig = px.line(trend_df, x='月份', y='参与率(%)', markers=True)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         else:
             st.info("数据不足6个月，无法分析趋势")
 
@@ -189,7 +189,7 @@ def render():
                 {"分层": LAYER_MAP[k]['label'], "人数": v, "说明": LAYER_MAP[k]['desc']}
                 for k, v in layer_stats['counts'].items()
             ])
-            st.dataframe(layer_df, use_container_width=True, hide_index=True)
+            st.dataframe(layer_df, width='stretch', hide_index=True)
 
         # 3. 数据完整性检查
         st.markdown("---")
@@ -232,7 +232,7 @@ def render_layer_analysis():
             {"分层": LAYER_MAP[k]['label'], "人数": v, "占比": f"{layer_stats['percentages'].get(k, 0)}%"}
             for k, v in layer_stats['counts'].items()
         ])
-        st.dataframe(layer_df, use_container_width=True, hide_index=True)
+        st.dataframe(layer_df, width='stretch', hide_index=True)
 
     with col2:
         import plotly.graph_objects as go
@@ -243,7 +243,7 @@ def render_layer_analysis():
             marker=dict(colors=['#2ecc71', '#3498db', '#f39c12', '#e67e22', '#e74c3c']),
         )])
         fig.update_layout(height=300)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     # 建议
     if layer_stats['total'] > 0:
@@ -284,7 +284,7 @@ def render_center_comparison():
         fig = px.bar(center_df, x="分中心", y="平均评分", color="平均评分",
                      color_continuous_scale='RdYlGn', text="平均评分")
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     with col2:
         fig = px.scatter(center_df, x="学员数", y="平均评分", size="学员数",
@@ -292,10 +292,10 @@ def render_center_comparison():
                          color_continuous_scale='RdYlGn')
         fig.update_traces(textposition='top center')
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     st.dataframe(center_df.sort_values("平均评分", ascending=False),
-                 use_container_width=True, hide_index=True)
+                 width='stretch', hide_index=True)
 
 
 def render_reading_analysis():
@@ -339,7 +339,7 @@ def render_reading_analysis():
         fig = px.bar(book_df, x="book_name", y="count", color="readers",
                      text="count", labels={"book_name": "书名", "count": "打卡次数", "readers": "读者数"})
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     # 分享统计
     st.markdown("---")
@@ -402,7 +402,7 @@ def render_comprehensive_report():
 
     st.markdown("\n".join(report_parts))
 
-    if st.button("📄 复制报告", use_container_width=False):
+    if st.button("📄 复制报告", width='content'):
         st.toast("报告已生成，请手动复制")
 
 
@@ -422,9 +422,9 @@ def render_class_analysis():
     fig = px.bar(class_df, x="班级", y="平均评分", color="平均评分",
                  color_continuous_scale='RdYlGn', text="平均评分")
     fig.update_layout(height=400)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
-    st.dataframe(class_df, use_container_width=True, hide_index=True)
+    st.dataframe(class_df, width='stretch', hide_index=True)
 
 
 if __name__ == "__main__":

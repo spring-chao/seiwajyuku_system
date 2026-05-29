@@ -55,7 +55,7 @@ def render():
             color_discrete_sequence=px.colors.qualitative.Set2,
         )
         fig.update_layout(showlegend=False, height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     with col2:
         st.subheader("🎯 学员分层分布")
@@ -77,7 +77,7 @@ def render():
             hole=0.4,
         )
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     st.markdown("---")
 
@@ -97,7 +97,7 @@ def render():
                 color_discrete_sequence=['#e74c3c'],
             )
             fig.update_layout(height=350)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         else:
             st.info("暂无月度趋势数据，请先导入活动记录")
 
@@ -118,7 +118,7 @@ def render():
                 orientation='h',
             )
             fig.update_layout(height=350)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         else:
             st.info("暂无分中心数据")
 
@@ -144,7 +144,7 @@ def render():
                 markers=True,
             )
             fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
     else:
         st.info("暂无活动趋势数据，请先导入活动记录")
 
@@ -155,7 +155,7 @@ def render():
         {"数据表": v['label'], "记录数": v['count'], "参与学员": v['member_count']}
         for k, v in stats['activities'].items()
     ])
-    st.dataframe(overview_df, use_container_width=True, hide_index=True)
+    st.dataframe(overview_df, width='stretch', hide_index=True)
 
     # 最后导入记录
     conn = get_connection()
@@ -166,7 +166,7 @@ def render():
     conn.close()
     if not recent_imports.empty:
         st.markdown("#### 最近导入记录")
-        st.dataframe(recent_imports, use_container_width=True, hide_index=True)
+        st.dataframe(recent_imports, width='stretch', hide_index=True)
 
 
 if __name__ == "__main__":
