@@ -293,15 +293,47 @@ def import_excel(file_path: str, template_key: str) -> Dict:
 
                 # 插入/更新
                 if record:
-                    # 学员信息表：按姓名自动去重，已存在则更新，不存在则插入
+                    # 学员信息表：按姓名(+手机号)去重，已存在则更新，不存在则插入
                     if table == 'members' and 'name' in record:
-                        cur.execute("SELECT id FROM members WHERE name=?", (record['name'],))
-                        existing = cur.fetchone()
-                        if existing:
+                        name = record['name']
+                        phone = record.get('phone', '')
+                        matched_id = None
+
+                        # 策略1：有手机号 → 按姓名+手机号精确匹配
+                        if phone:
+                            cur.execute(
+                                "SELECT id FROM members WHERE name=? AND phone=?",
+                                (name, phone)
+                            )
+                            row = cur.fetchone()
+                            if row:
+                                matched_id = row[0]
+
+                        # 策略2：无手机号或姓名+手机号没匹配到 → 按姓名精确匹配（仅当唯一）
+                        if matched_id is None:
+                            cur.execute("SELECT id FROM members WHERE name=?", (name,))
+                            rows = cur.fetchall()
+                            if len(rows) == 1:
+                                matched_id = rows[0][0]
+                            elif len(rows) > 1:
+                                # 同名多人且无手机号（或手机号不同）→ 跳过，让用户补充
+                                if phone:
+                                    result['skipped'] += 1
+                                    result['errors'].append(
+                                        f"第{idx+2}行: 姓名'{name}'匹配到多条记录，指定手机号'{phone}'未匹配到任何记录，跳过"
+                                    )
+                                else:
+                                    result['skipped'] += 1
+                                    result['errors'].append(
+                                        f"第{idx+2}行: 姓名'{name}'匹配到多条记录，请在Excel中添加手机号列以区分，跳过"
+                                    )
+                                continue
+
+                        if matched_id is not None:
                             set_clause = ', '.join(f"{k}=?" for k in record.keys())
                             cur.execute(
                                 f"UPDATE {table} SET {set_clause} WHERE id=?",
-                                tuple(record.values()) + (existing[0],)
+                                tuple(record.values()) + (matched_id,)
                             )
                             result['imported'] += 1
                             continue
