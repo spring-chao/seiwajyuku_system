@@ -125,7 +125,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
         mid = execute_insert('members', member_data)
         member_ids.append(mid)
 
-    print(f"  ✅ 已生成 {len(member_ids)} 名学员")
+    print(f"  [OK] 已生成 {len(member_ids)} 名学员")
 
     # ================================================================
     # 2. 公司情况
@@ -148,7 +148,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                 }
                 execute_insert('companies', company_data)
 
-    print(f"  ✅ 已生成 {len(companies_seen)} 家公司信息")
+    print(f"  [OK] 已生成 {len(companies_seen)} 家公司信息")
 
     # ================================================================
     # 3. 小组学习会记录
@@ -185,7 +185,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                     execute_insert('group_sessions', group_data)
                     group_count += 1
 
-    print(f"  ✅ 已生成 {group_count} 条小组学习会记录")
+    print(f"  [OK] 已生成 {group_count} 条小组学习会记录")
 
     # ================================================================
     # 4. 班级学习会记录
@@ -215,7 +215,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                     execute_insert('class_sessions', class_data)
                     class_count += 1
 
-    print(f"  ✅ 已生成 {class_count} 条班级学习会记录")
+    print(f"  [OK] 已生成 {class_count} 条班级学习会记录")
 
     # ================================================================
     # 5. 课程参与记录
@@ -242,7 +242,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                     execute_insert('courses', course_data)
                     course_count += 1
 
-    print(f"  ✅ 已生成 {course_count} 条课程记录")
+    print(f"  [OK] 已生成 {course_count} 条课程记录")
 
     # ================================================================
     # 6. 报告会参与记录
@@ -268,7 +268,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                     execute_insert('report_meetings', report_data)
                     report_count += 1
 
-    print(f"  ✅ 已生成 {report_count} 条报告会记录")
+    print(f"  [OK] 已生成 {report_count} 条报告会记录")
 
     # ================================================================
     # 7. 游学参与记录
@@ -290,7 +290,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
             execute_insert('study_tours', tour_data)
             tour_count += 1
 
-    print(f"  ✅ 已生成 {tour_count} 条游学记录")
+    print(f"  [OK] 已生成 {tour_count} 条游学记录")
 
     # ================================================================
     # 8. 读书打卡记录
@@ -318,7 +318,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                 execute_insert('reading_checkins', checkin_data)
                 checkin_count += 1
 
-    print(f"  ✅ 已生成 {checkin_count} 条读书打卡记录")
+    print(f"  [OK] 已生成 {checkin_count} 条读书打卡记录")
 
     # ================================================================
     # 9. 读书分享记录
@@ -343,7 +343,7 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
                 execute_insert('reading_shares', share_data)
                 share_count += 1
 
-    print(f"  ✅ 已生成 {share_count} 条读书分享记录")
+    print(f"  [OK] 已生成 {share_count} 条读书分享记录")
 
     conn.close()
 
@@ -351,11 +351,11 @@ def generate_sample_data(member_count: int = 50, months: int = 6):
     # 总结
     # ================================================================
     print("\n" + "=" * 50)
-    print("📊 模拟数据生成完成！")
+    print("[OK] 模拟数据生成完成！")
     print("=" * 50)
-    print(f"👤 学员: {len(member_ids)} 人")
-    print(f"📅 覆盖周期: {months} 个月")
-    print(f"📋 活动总记录: {group_count + class_count + course_count + report_count + tour_count + checkin_count + share_count} 条")
+    print(f"[人员] 学员: {len(member_ids)} 人")
+    print(f"[周期] 覆盖周期: {months} 个月")
+    print(f"[活动] 活动总记录: {group_count + class_count + course_count + report_count + tour_count + checkin_count + share_count} 条")
     print(f"   ├ 小组学习会: {group_count}")
     print(f"   ├ 班级学习会: {class_count}")
     print(f"   ├ 课程参与: {course_count}")

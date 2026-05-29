@@ -262,7 +262,7 @@ def init_database():
 
     conn.commit()
     conn.close()
-    print(f"✅ 数据库初始化完成: {DB_PATH}")
+    print(f"[OK] 数据库初始化完成: {DB_PATH}")
 
 
 # ---- 通用 CRUD 操作 ----
